@@ -6,6 +6,13 @@ enum Mode
     IDLE
 };
 
+const char* modeNames[] = {
+    "STUDY",
+    "GAMING",
+    "NIGHT",
+    "IDLE"
+};
+
 Mode currentMode = STUDY;
 
 int brightness = 0;
@@ -17,7 +24,6 @@ const int redPin = 3;
 const int greenPin = 6;
 const int bluePin = 9;
 const int potPin = A0;
-
 
 void updateRGB() {
   int redValue = 0;
@@ -48,6 +54,32 @@ void updateRGB() {
   analogWrite(bluePin, blueValue);
 }
 
+// DASHBOARD
+
+void printDashboard() {
+
+  int brightnessPercent = map(brightness, 0, 255, 0, 100);
+
+  Serial.println();
+  Serial.println("==============================");
+  Serial.println("          NOVA v0.1");
+  Serial.println("==============================");
+
+  Serial.print("Mode: ");
+  Serial.println(modeNames[currentMode]);
+
+  Serial.println("Brightness: ");
+  Serial.println(brightnessPercent);
+  Serial.println("%");
+
+  Serial.println("ADC Value: ");
+  Serial.println(knobValue);
+
+  Serial.println("System Status: READY");
+  Serial.println("==============================");
+  
+}
+
 
 
 void setup()
@@ -57,6 +89,8 @@ void setup()
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
+
+  printDashboard();
 
   Serial.begin(9600);
 }
@@ -72,8 +106,7 @@ void loop()
   if (lastButtonState == HIGH && currentButtonState == LOW) {
     currentMode = static_cast<Mode>((currentMode + 1) % 4);
     
-    Serial.print("Mode = ");
-    Serial.println(currentMode);
+    printDashboard();
   }
 
   lastButtonState = currentButtonState;

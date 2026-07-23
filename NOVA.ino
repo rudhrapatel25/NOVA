@@ -15,6 +15,7 @@ const char* modeNames[] = {
 
 Mode currentMode = STUDY;
 
+int lastBrightness = -1;
 int brightness = 0;
 int knobValue = 0;
 bool lastButtonState = HIGH;
@@ -59,6 +60,9 @@ void updateRGB() {
 void printDashboard() {
 
   int brightnessPercent = map(brightness, 0, 255, 0, 100);
+  
+ 
+
 
   Serial.println();
   Serial.println("==============================");
@@ -68,11 +72,11 @@ void printDashboard() {
   Serial.print("Mode: ");
   Serial.println(modeNames[currentMode]);
 
-  Serial.println("Brightness: ");
-  Serial.println(brightnessPercent);
+  Serial.print("Brightness: ");
+  Serial.print(brightnessPercent);
   Serial.println("%");
 
-  Serial.println("ADC Value: ");
+  Serial.print("ADC Value: ");
   Serial.println(knobValue);
 
   Serial.println("System Status: READY");
@@ -84,15 +88,22 @@ void printDashboard() {
 
 void setup()
 {
+  
+  Serial.begin(9600);
+  
   pinMode(buttonPin, INPUT_PULLUP);
 
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
 
+  
+  knobValue = analogRead(potPin);
+  brightness = map(knobValue, 0, 1023, 0, 255);
+  lastBrightness = brightness;
+  
   printDashboard();
 
-  Serial.begin(9600);
 }
 
 void loop()
@@ -111,8 +122,12 @@ void loop()
 
   lastButtonState = currentButtonState;
   
+   // Print only when brightness changes noticeably
+  if (abs(brightness - lastBrightness) >= 5)
+  {
+    printDashboard();
+    lastBrightness = brightness;
+  }
   
-updateRGB();
-  
-  
+	updateRGB();
 }

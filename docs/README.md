@@ -1,0 +1,1 @@
+This folder contains circuit diagrams, design notes, and project documentation.

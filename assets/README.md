@@ -1,0 +1,1 @@
+This folder contains resources used by NOVA, such as future OLED icons and bitmaps.
